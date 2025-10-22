@@ -1,4 +1,5 @@
-           ┌───────────────────┐
+Pipeline:
+	   ┌───────────────────┐
            │   Data Source      │
            │ nhatot.com Web     │
            │ Scraping/ Crawling│
