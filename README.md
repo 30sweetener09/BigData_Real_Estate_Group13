@@ -27,7 +27,7 @@
         ▼                          ▼
 ┌───────────────────┐       ┌───────────────────┐
 │ Batch Storage     │       │ NoSQL Database    │
-│ HDFS / S3         │       │ MongoDB / Cassandra│
+│ HDFS              │       │ MongoDB           │
 │ Raw & Processed   │       │ Fast querying &   │
 │ Data              │       │ analytics         │
 └─────────┬─────────┘       └─────────┬─────────┘
