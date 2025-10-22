@@ -35,15 +35,6 @@
           └────────────┬─────────────┘
                        ▼
                ┌───────────────┐
-               │ Analytics &   │
-               │ ML Processing │
-               │ Spark MLlib   │
-               │ GraphFrames   │
-               │ Time Series   │
-               └───────┬───────┘
-                       │
-                       ▼
-               ┌───────────────┐
                │ Visualization │
                │ Dashboards    │
                │ (Grafana /    │
