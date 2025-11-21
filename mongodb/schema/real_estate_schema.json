@@ -1,0 +1,19 @@
+{
+  "_id": "string",
+  "price": "int64",
+  "width": "double",
+  "length": "double",
+  "street_name": "string",
+  "category_name": "string",
+  "rooms": "int32",
+  "size": "double",
+  "living_size": "double",
+  "location": {
+    "ward": "string",
+    "area": "string",
+    "region": "string"
+  },
+  "is_main_street": "boolean",
+  "property_legal_document": "boolean",
+  "status": "boolean"
+}
