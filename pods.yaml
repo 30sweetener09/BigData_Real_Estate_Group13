@@ -1,0 +1,43 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-producer
+  namespace: kafka
+  labels:
+    app: producer
+spec:
+  containers:
+  - name: producer
+    image: python:3.9-slim
+    command: ['sleep', 'infinity']
+    resources:
+      requests:
+        memory: "64Mi"
+        cpu: "50m"
+      limits:
+        memory: "128Mi"
+        cpu: "100m"
+  restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-consumer
+  namespace: kafka
+  labels:
+    app: consumer
+spec:
+  containers:
+  - name: consumer
+    image: python:3.9-slim
+    command: ['sleep', 'infinity']
+    resources:
+      requests:
+        memory: "64Mi"
+        cpu: "50m"
+      limits:
+        memory: "128Mi"
+        cpu: "100m"
+  restartPolicy: Always

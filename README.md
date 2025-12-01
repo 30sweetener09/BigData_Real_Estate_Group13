@@ -40,9 +40,5 @@
                │ (Grafana /    │
                │ Superset)     │
                └───────────────┘
-
-Kafka: kubectl create namespace kafka
-kubectl apply -f zookeeper-service.yaml
-kubectl apply -f zookeeper-deployment.yaml
-kubectl get pods -n kafka
-kubectl logs <zookeeper-pod-name> -n kafka
+```
+### Chi tiết từng bước: https://docs.google.com/document/d/1BikZHBTCZRls6LuqYTBvW3gktqun07zb3r6am1l9T6Y/edit?usp=sharing
