@@ -1,0 +1,115 @@
+---
+# 1. ConfigMap: Chứa toàn bộ cấu hình Kafka
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-config
+  namespace: kafka
+data:
+  server.properties: |
+    # --- KRaft Configuration ---
+    process.roles=broker,controller
+    node.id=1
+    controller.quorum.voters=1@kafka-service:9093
+    cluster.id=MkU3OEVBNTcwNTJENDM2Qk  # ID cố định để format
+
+    # --- Listeners ---
+    # Inter-broker listener
+    listeners=PLAINTEXT://:9092,CONTROLLER://:9093
+    # Advertised: Quan trọng! Phải trỏ về DNS của Pod hoặc Service
+    advertised.listeners=PLAINTEXT://kafka-0.kafka-service.kafka.svc.cluster.local:9092
+    listener.security.protocol.map=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+    controller.listener.names=CONTROLLER
+
+    # --- Log & Storage ---
+    log.dirs=/var/lib/kafka/data
+    num.partitions=3
+    default.replication.factor=1
+    offsets.topic.replication.factor=1
+    transaction.state.log.replication.factor=1
+    transaction.state.log.min.isr=1
+    
+    # --- Retention ---
+    log.retention.hours=168
+
+---
+# 2. Service Headless (Bắt buộc cho StatefulSet)
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-service
+  namespace: kafka
+  labels:
+    app: kafka
+spec:
+  ports:
+  - port: 9092
+    name: plaintext
+  - port: 9093
+    name: controller
+  clusterIP: None
+  selector:
+    app: kafka
+
+---
+# 3. StatefulSet (Đã sửa Command và Storage)
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: kafka
+  namespace: kafka
+spec:
+  serviceName: kafka-service
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka
+  template:
+    metadata:
+      labels:
+        app: kafka
+    spec:
+      containers:
+      - name: kafka
+        image: apache/kafka:3.8.1
+        ports:
+        - containerPort: 9092
+        - containerPort: 9093
+        env:
+        # Chỉ cần biến CLUSTER_ID cho lệnh format
+        - name: CLUSTER_ID
+          value: "MkU3OEVBNTcwNTJENDM2Qk"
+        volumeMounts:
+        - name: kafka-data
+          mountPath: /var/lib/kafka/data
+        - name: config-volume
+          mountPath: /etc/kafka/config
+        command:
+        - sh
+        - -c
+        - |
+          echo "Starting Kafka KRaft..."
+          
+          # 1. Định dạng Storage nếu chưa có meta.properties
+          if [ ! -f /var/lib/kafka/data/meta.properties ]; then
+            echo "Formatting storage..."
+            /opt/kafka/bin/kafka-storage.sh format -t $CLUSTER_ID -c /etc/kafka/config/server.properties
+          fi
+          
+          # 2. Khởi động Kafka dùng file config từ ConfigMap
+          echo "Starting Server..."
+          /opt/kafka/bin/kafka-server-start.sh /etc/kafka/config/server.properties
+      volumes:
+      - name: config-volume
+        configMap:
+          name: kafka-config
+  
+  # Sử dụng volumeClaimTemplates thay vì PVC rời
+  volumeClaimTemplates:
+  - metadata:
+      name: kafka-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
