@@ -1,0 +1,47 @@
+# Metabase Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: metabase-service
+spec:
+  type: NodePort  # Cho phép truy cập từ trình duyệt ngoài
+  selector:
+    app: metabase
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metabase-deployment
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: metabase
+  template:
+    metadata:
+      labels:
+        app: metabase
+    spec:
+      containers:
+      - name: metabase
+        image: metabase/metabase:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: MB_DB_TYPE
+          value: mongo
+        - name: MB_DB_HOST
+          value: my-mongodb
+        - name: MB_DB_PORT
+          value: "27017"
+        - name: MB_DB_DBNAME
+          value: metabase
+        - name: MB_DB_USER
+          value: root
+        - name: MB_DB_PASS
+          value: WJpHwyJqi5
