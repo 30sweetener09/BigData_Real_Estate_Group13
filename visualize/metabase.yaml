@@ -3,22 +3,44 @@ apiVersion: v1
 kind: Service
 metadata:
   name: metabase-service
+  labels:
+    app: metabase
 spec:
-  type: NodePort  # Cho phép truy cập từ trình duyệt ngoài
+  type: NodePort
   selector:
     app: metabase
   ports:
     - protocol: TCP
       port: 3000
       targetPort: 3000
+      nodePort: 30300  # Cố định port để dễ truy cập
 ---
+# Persistent Volume Claim
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: metabase-pvc
+  labels:
+    app: metabase
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi  # Đủ cho demo với 1000 mẫu
+  # storageClassName: standard  # Uncomment và điều chỉnh nếu cần
+---
+# Metabase Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: metabase-deployment
-  namespace: default
+  labels:
+    app: metabase
 spec:
   replicas: 1
+  strategy:
+    type: Recreate  # Quan trọng cho StatefulSet với PV
   selector:
     matchLabels:
       app: metabase
@@ -29,19 +51,52 @@ spec:
     spec:
       containers:
       - name: metabase
-        image: metabase/metabase:latest
+        image: metabase/metabase:v0.51.3
         ports:
         - containerPort: 3000
+          name: http
         env:
-        - name: MB_DB_TYPE
-          value: mongo
-        - name: MB_DB_HOST
-          value: my-mongodb
-        - name: MB_DB_PORT
-          value: "27017"
-        - name: MB_DB_DBNAME
-          value: metabase
-        - name: MB_DB_USER
-          value: root
-        - name: MB_DB_PASS
-          value: WJpHwyJqi5
+        - name: MB_DB_FILE
+          value: /metabase-data/metabase.db
+        - name: JAVA_OPTS
+          value: "-Xmx768m"  # Giảm memory cho JVM
+        - name: MB_JETTY_HOST
+          value: "0.0.0.0"
+        volumeMounts:
+        - name: metabase-storage
+          mountPath: /metabase-data
+        resources:
+          requests:
+            memory: "1Gi"  # Đủ cho demo nhỏ
+            cpu: "250m"
+          limits:
+            memory: "2Gi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 3000
+          initialDelaySeconds: 120
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 3000
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        startupProbe:
+          httpGet:
+            path: /api/health
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 30  # 5 phút để startup
+      volumes:
+      - name: metabase-storage
+        persistentVolumeClaim:
+          claimName: metabase-pvc

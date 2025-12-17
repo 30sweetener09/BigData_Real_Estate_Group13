@@ -1,0 +1,12 @@
+# hdfs-fix-values.yaml
+hdfs:
+  dataNode:
+    pdbMinAvailable: 1
+    
+  # Config cho hdfs-site.xml
+  config:
+    hdfsSite:
+      dfs.datanode.use.datanode.hostname: "true"
+      dfs.client.use.datanode.hostname: "true"
+      dfs.namenode.datanode.registration.ip-hostname-check: "false"
+      dfs.replication: "1"

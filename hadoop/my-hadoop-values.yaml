@@ -1,0 +1,21 @@
+hdfs:
+  dataNode:
+    # Đặt externalHostname thành empty hoặc hostname thực trong K8s
+    externalHostname: ""  # Để trống để dùng internal K8s hostname
+    
+    # Hoặc set thành hostname đầy đủ của pod
+    # externalHostname: my-hadoop-hadoop-hdfs-dn-0.my-hadoop-hadoop-hdfs-dn.default.svc.cluster.local
+    
+    # Config bổ sung
+    config:
+      hdfsSite:
+        dfs.datanode.use.datanode.hostname: "true"
+        dfs.client.use.datanode.hostname: "true"
+        dfs.namenode.datanode.registration.ip-hostname-check: "false"
+        dfs.replication: "1"
+  
+  nameNode:
+    config:
+      hdfsSite:
+        dfs.client.use.datanode.hostname: "true"
+        dfs.datanode.use.datanode.hostname: "true"
