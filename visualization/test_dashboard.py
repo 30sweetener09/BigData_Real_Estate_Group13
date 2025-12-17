@@ -71,6 +71,9 @@ def import_data():
                     "ward": str(ad.get("ward_name", "")),
                     "area": str(ad.get("area_name", "")),
                     "region": str(ad.get("region_name", "")),
+                    "list_time": ad.get("list_time"),
+                    "latitude": get_float(ad.get("latitude")),   # Vĩ độ
+                    "longitude": get_float(ad.get("longitude")), # Kinh độ
                     "is_main_street": get_bool(ad.get("is_main_street")), # Mặt đường
                     "property_legal_document": get_bool(ad.get("property_legal_document", 1)), # Có sổ đỏ?
                     "status": True # Mặc định là đang bán
