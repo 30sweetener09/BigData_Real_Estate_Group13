@@ -1,0 +1,10 @@
+batch:
+  date: "2025-12-18"
+
+hdfs:
+  raw: "hdfs://localhost:9000/data/nhatot/data_lines.json"
+
+mongodb:
+  uri: "mongodb://localhost:27017"
+  db: "real_estate"
+  collection: "properties"
