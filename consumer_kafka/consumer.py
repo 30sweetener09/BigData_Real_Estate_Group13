@@ -37,7 +37,7 @@ def create_consumer():
                 auto_offset_reset='earliest',
                 enable_auto_commit=True,
                 max_poll_records=10,
-                request_timeout_ms=120000,  # Tăng timeout
+                request_timeout_ms=150000,  # Tăng timeout
                 session_timeout_ms=60000,
                 heartbeat_interval_ms=20000,
                 api_version_auto_timeout_ms=20000
