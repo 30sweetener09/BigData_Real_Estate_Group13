@@ -37,7 +37,7 @@ def create_consumer():
                 auto_offset_reset='earliest',
                 enable_auto_commit=True,
                 max_poll_records=10,
-                request_timeout_ms=150000,  # Tăng timeout
+                request_timeout_ms=120000,  # Tăng timeout lên
                 session_timeout_ms=60000,
                 heartbeat_interval_ms=20000,
                 api_version_auto_timeout_ms=20000
@@ -74,7 +74,7 @@ def create_hdfs_client():
                 print(f"  Đợi 5 giây trước khi thử lại...")
                 time.sleep(5)
     
-    print("❌ Không thể kết nối tới HDFS sau nhiều lần thử")
+    print("❌ Không thể kết nối tới HDFS sau nhiều lần thử!")
     print("  Kiểm tra HDFS có đang chạy không:")
     print("  minikube kubectl -- get pods | findstr hdfs")
     sys.exit(1)
@@ -84,11 +84,11 @@ def ensure_hdfs_directory(client, directory):
     print(f"\nKiểm tra thư mục output: {directory}")
     try:
         client.status(directory)
-        print(f"✓ Thư mục đã tồn tại")
+        print(f"✓ Thư mục đã tồn tại!")
     except:
         try:
             client.makedirs(directory)
-            print(f"✓ Đã tạo thư mục mới")
+            print(f"✓ Đã tạo thư mục mới!")
         except Exception as e:
             print(f"❌ Lỗi tạo thư mục: {e}")
             sys.exit(1)

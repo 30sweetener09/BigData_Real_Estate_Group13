@@ -29,7 +29,7 @@ def create_producer():
                 api_version_auto_timeout_ms=20000
             )
             print(f"✓ Kết nối Kafka thành công!")
-            # Test gửi message đơn giản
+            # Test gửi message đơn giản.
             print("✓ Đang test kết nối...")
             future = producer.send(TOPIC_NAME, key='test', value={'test': 'connection'})
             future.get(timeout=30)
@@ -41,7 +41,7 @@ def create_producer():
                 print(f"  Đợi 5 giây trước khi thử lại...")
                 time.sleep(5)
     
-    print("❌ Không thể kết nối tới Kafka sau nhiều lần thử")
+    print("❌ Không thể kết nối tới Kafka sau nhiều lần thử!")
     sys.exit(1)
 
 def load_data(file_path):
@@ -53,7 +53,7 @@ def load_data(file_path):
             data = json.load(f)
         
         if not isinstance(data, dict):
-            print(f"❌ File JSON phải có dạng dict/object, không phải {type(data)}")
+            print(f"❌ File JSON phải có dạng dict/object, không phải {type(data)}!")
             sys.exit(1)
             
         print(f"✓ Đã đọc {len(data)} records từ file")
@@ -68,7 +68,7 @@ def load_data(file_path):
         
     except json.JSONDecodeError as e:
         print(f"❌ Lỗi đọc JSON: {e}")
-        print(f"  File phải có format JSON hợp lệ")
+        print(f"  File phải có format JSON hợp lệ!git")
         sys.exit(1)
         
     except Exception as e:
