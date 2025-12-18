@@ -8,9 +8,7 @@ from datetime import datetime
 # ==================== CẤU HÌNH ====================
 # Thử các tên service Kafka sau (uncomment cái nào đúng):
 KAFKA_BROKER = 'kafka-0.kafka-service.kafka.svc.cluster.local:9092'
-# KAFKA_BROKER = 'kafka-0.kafka-headless.kafka.svc.cluster.local:9092'
-# KAFKA_BROKER = 'kafka-bootstrap.kafka.svc.cluster.local:9092'
-# KAFKA_BROKER = 'localhost:9092'  # Nếu chạy trong cùng pod với Kafka
+
 
 TOPIC_NAME = 'data-stream'
 GROUP_ID = 'hdfs-consumer-group'
